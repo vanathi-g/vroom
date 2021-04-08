@@ -1,0 +1,10 @@
+<%- include('header') %>
+
+<h1>Drivers</h1>
+<ul id="driver-list">
+  <% drivers.forEach( driver => { %>
+    <li><%= driver.name %> - <%= driver.location %></li>
+  <% }) %>
+</ul>
+
+<%- include('footer') %>
