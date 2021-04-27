@@ -1,0 +1,51 @@
+<%- include('header') %>
+
+<div class="card">
+    <h5 class="card-header">Book your transportation</h5>
+    <div class="card-body">
+        <form class="row g-3" method="post" action="/book">
+            <div class="col-12">
+                <label for="inputAddress2" class="form-label">Destination Address</label>
+                <input type="text" class="form-control" id="destAddress" name="destAddress"
+                    placeholder="Apartment, studio, or floor" />
+            </div>
+            <div class="col-md-6">
+                <label for="inputCity" class="form-label">City</label>
+                <input type="text" class="form-control" id="destCity" name="destCity" />
+            </div>
+            <div class="col-md-2">
+                <label for="inputZip" class="form-label">Zip</label>
+                <input type="text" class="form-control" id="destZip" name="destZip" />
+            </div>
+            <div class="col-md-6">
+                <label for="inputCity" class="form-label">Date and Time of pickup</label>
+                <input type="datetime-local" id="pickuptime" name="pickuptime" />
+            </div>
+            <div class="col-md-4">
+                <label for="inputType" class="form-label">Type of Load</label>
+                <select id="inputType" name="inputType" class="form-select">
+                    <option selected>Choose...</option>
+                    <option>Farm Produce</option>
+                    <option>Construction Materials</option>
+                    <option>Cold Storage</option>
+                    <option>Other</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="otherLoad" class="form-label">If other, mention :</label>
+                <input type="text" class="form-control" id="otherLoad" name="otherLoad" />
+            </div>
+            <div class="col-md-2">
+                <label for="loadwt" class="form-label">Weight of Load</label>
+                <input type="text" class="form-control" id="loadwt" name="loadwt" />
+            </div>
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+
+<% include('footer') %>

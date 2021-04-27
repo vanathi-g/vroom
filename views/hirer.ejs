@@ -1,0 +1,25 @@
+<%- include('header') %>
+
+<div class="px-4 py-5 my-5 bg-light" style="border-radius: 0.5em;">
+    <!-- <img class="d-block mx-auto mb-4" src="images/maps.jpg" alt="" width="400" height="400" /> -->
+    <h4 class="display-6 fw-bold">Welcome, <%= uname %></h4>
+    <hr>
+    <div>
+        <h5>Nearby</h5>
+        <table>
+            <tbody>
+                <% nearby.forEach( driver => { %>
+                <tr>
+                    <td><%= driver.name %> - <%= driver.location %></td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+
+        <div class="d-grid gap-1 d-sm-flex justify-content-sm-center">
+            <a href="/book" class="btn btn-primary btn-lg px-4 me-sm-3">Book a Truck Now!</a>
+        </div>
+    </div>
+</div>
+
+<% include('footer') %>

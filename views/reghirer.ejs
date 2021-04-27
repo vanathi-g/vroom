@@ -1,0 +1,53 @@
+<%- include('header') %>
+
+<div class="card reg-card">
+    <h5 class="card-header">Hirer Registration</h5>
+    <div class="card-body">
+        <form class="row g-3" method="post" action="/register">
+            <div class="col-12">
+                <label for="hirerName" class="form-label">Full Name </label>
+                <input type="text" class="form-control" name="fname" id="hirerName" />
+            </div>
+            <div class="col-12">
+                <label for="email" class="form-label">Email ID</label>
+                <input type="email" class="form-control" name="email" id="email" />
+            </div>
+            <div class="col-6">
+                <label for="password" class="form-label">Password </label>
+                <input type="password" class="form-control" name="pwd" id="password" />
+            </div>
+            <div class="col-6">
+                <label for="password-check" class="form-label">Retype password </label>
+                <input type="password" class="form-control" name="pwdcheck" id="password-check" />
+            </div>
+            <div class="col-md-12">
+                <label for="hirerAddr" class="form-label">Residential Address</label>
+                <textarea class="form-control" name="address" id="hirerAddr"></textarea>
+            </div>
+            <div class="col-md-6">
+                <label for="hirerCity" class="form-label">City</label>
+                <input type="text" class="form-control" name="city" id="hirerCity" />
+            </div>
+            <div class="col-md-6">
+                <label for="hirerState" class="form-label">State</label>
+                <input type="text" class="form-control" name="state" id="hirerState" />
+            </div>
+            <div class="col-md-6">
+                <label for="zip" class="form-label">Zip Code</label>
+                <input type="text" class="form-control" name="zip" id="zip" />
+            </div>
+            <div class="col-md-6">
+                <label for="mobile" class="form-label">Mobile Number</label>
+                <input type="text" class="form-control" name="phno" id="mobile" />
+            </div>
+            <div class="col-12">
+                <input type="hidden" name="type" value="hirer">
+                <input type="submit" class="btn btn-dark" value="Register">
+            </div>
+            <p>Already have an account? <a href="/register">Sign In to your account!</a></p>
+        </form>
+    </div>
+</div>
+</div>
+
+<%- include('footer') %>

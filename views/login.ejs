@@ -1,0 +1,33 @@
+<%- include('header') %>
+
+<main class="form-signin">
+    <form method="post" action="/login" id="login-form">
+        <h1 class="h3 mb-3 fw-normal">Sign In</h1>
+
+        <div class="form-floating">
+        <input type="email" class="form-control" id="floatingInput" name="email" placeholder="name@example.com">
+        <label for="floatingInput">Email address</label>
+        </div>
+        <div class="form-floating">
+        <input type="password" class="form-control" id="floatingPassword" name="password" placeholder="Password">
+        <label for="floatingPassword">Password</label>
+        </div>
+        <br>
+        <div class="checkbox mb-3">
+        <label>
+            <input type="checkbox" value="remember-me"> Remember me
+        </label>
+        </div>
+        <p>Don't have an account? <a href="/register">Register Now!</a></p>
+        <input type="submit" class="w-100 btn btn-lg btn-outline-dark" value="Sign In">
+        <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
+    </form>
+
+    <% if (message.length > 0) { %>
+        <div class="alert alert-danger col-sm-12"><%= message %></div>
+    <% } %>
+
+</main>
+</div>
+
+<%include('footer') %>
