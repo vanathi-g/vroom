@@ -180,13 +180,13 @@ app.get('/logout', function (req, res) {
 app.get('/driver', function (req, res) {
     if (req.session.user) {
         let driver = req.session.user;
-        console.log(driver);
         const query = `SELECT * FROM trips WHERE(driver_id='${driver.id}' AND status='unconfirmed')`
         connection.query(query, function (err, results) {
             res.render('driver', {
                 title: "Home",
                 logged_in: true,
-                requests: results
+                requests: results,
+                upcoming: upcoming
             });
         })
     } else {
@@ -243,9 +243,6 @@ app.post('/book', function (req, res) {
     delete trip.loadtype;
     trip.pickuptime = trip.pickuptime.replace('T', ' ') + ':00';
     trip.status = "unconfirmed";
-
-    let driver_id = 1;
-
 
     connection.query(`INSERT INTO loads VALUES(NULL, ?)`, [Object.values(load)], function (err, results) {
         if (err) throw err;

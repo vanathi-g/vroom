@@ -5,7 +5,7 @@
     <h4 class="display-6 fw-bold">Welcome!</h4>
     <hr>
     <div id="requests">
-        <table>
+        <table id="request">
             <tbody>
                 <% requests.forEach( trip => { %>
                 <tr>
@@ -20,7 +20,7 @@
                 <% }) %>
             </tbody>
         </table>
-        <!-- <table>
+        <!-- <table id="upcoming">
             <tbody>
                 <% upcoming.forEach( trip => { %>
                 <tr>
@@ -30,6 +30,7 @@
                     <td><%= trip.destState %></td>
                     <td><%= trip.destZip %></td>
                     <td><%= trip.pickuptime %></td>
+                    <% if(trip.status == "confirmed") 
                     <td><button onclick='acceptTrip(event)'>Start</button></td>
                 </tr>
                 <% }) %>

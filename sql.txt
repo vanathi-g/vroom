@@ -40,4 +40,25 @@ CREATE TABLE locations(
   state varchar(20) NOT NULL
 );
 
+CREATE TABLE loads(
+  load_id INT AUTO_INCREMENT PRIMARY KEY,
+  hirer_id INT NOT NULL,
+  weight INT NOT NULL,
+  type varchar(50) NOT NULL
+);
+
+CREATE TABLE trips(
+  trip_id INT AUTO_INCREMENT PRIMARY KEY,
+  destAddress varchar(100) NOT NULL,
+  destCity varchar(20) NOT NULL,
+  destState varchar(20) NOT NULL,
+  destZip varchar(6) NOT NULL,
+  pickuptime datetime NOT NULL,
+  status varchar(20) NOT NULL,
+  driver_id INT NOT NULL,
+  load_id INT NOT NULL
+);
+
+list of requests
+
 INSERT INTO accounts VALUES("admin", "hirer", "adminpass", "admin@mail.com");
