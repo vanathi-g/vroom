@@ -1,21 +1,52 @@
 <%- include('header') %>
 
-<div id="request">
-    <table id="triprequest" name="triprequest">
-
-    </table>
+<div class="px-4 py-5 my-5 bg-light" style="border-radius: 0.5em;">
+    <!-- <img class="d-block mx-auto mb-4" src="images/maps.jpg" alt="" width="400" height="400" /> -->
+    <h4 class="display-6 fw-bold">Welcome!</h4>
+    <hr>
+    <div id="requests">
+        <table>
+            <tbody>
+                <% requests.forEach( trip => { %>
+                <tr>
+                    <td><%= trip.trip_id %></td>
+                    <td><%= trip.destAddress %></td>
+                    <td><%= trip.destCity %></td>
+                    <td><%= trip.destState %></td>
+                    <td><%= trip.destZip %></td>
+                    <td><%= trip.pickuptime %></td>
+                    <td><button onclick='acceptTrip(event)'>Accept</button></td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        <!-- <table>
+            <tbody>
+                <% upcoming.forEach( trip => { %>
+                <tr>
+                    <td><%= trip.trip_id %></td>
+                    <td><%= trip.destAddress %></td>
+                    <td><%= trip.destCity %></td>
+                    <td><%= trip.destState %></td>
+                    <td><%= trip.destZip %></td>
+                    <td><%= trip.pickuptime %></td>
+                    <td><button onclick='acceptTrip(event)'>Start</button></td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table> -->
+    </div>
+    <form id="accept-trip-form" method="post" action="/driver">
+        <input id="accept-trip-id" type="hidden" name="accepted_trip_id" value="">
+    </form>
 </div>
-
-<div id="upcoming">
-    <table name="upcomingtrips">
-        <tr>
-            <th>Start address</th>
-            <th>Destination address</th>
-            <th>Load details</th>
-        </tr>
-    </table>
-
 </div>
-</div>
+<script>
+    function acceptTrip(event){
+        let trip_id = event.target.parentNode.parentNode.firstChild.nextSibling.textContent;
+        document.getElementById('accept-trip-id').value = trip_id;
+        document.getElementById('accept-trip-form').submit();
+    }
+</script>
 
 <% include('footer') %>

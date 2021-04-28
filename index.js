@@ -13,12 +13,14 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs');
 
 // TO PARSE REQUEST BODY
+
 bodyParser = require('body-parser')
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 
 // SESSION MANAGEMENT
+
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -29,6 +31,7 @@ app.use(session({
 }));
 
 // DB CONNECTION
+
 const host = process.env.MYSQL_HOST;
 const database = process.env.MYSQL_DB;
 
@@ -39,7 +42,7 @@ var connection = mysql.createConnection({
     user: process.env.MYSQL_USER,
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DB,
-})
+});
 
 connection.connect()
 
@@ -76,13 +79,19 @@ app.post('/login', function (req, res) {
     let message = '';
 
     connection.query(`SELECT * FROM accounts WHERE email="${email}" and password="${password}"`, function (err, results, fields) {
-        console.log(email, password, results)
         if (results.length > 0) {
             sessionData.user = results[0];
             if (results[0].type === "driver")
                 res.redirect('/driver');
-            else
-                res.redirect('/hirer');
+            else {
+                let id = results[0].id
+                connection.query(`SELECT zip, city, state FROM hirers WHERE id="${id}"`, function (err, results, fields) {
+                    sessionData.user['zip'] = results[0].zip;
+                    sessionData.user['city'] = results[0].city;
+                    sessionData.user['state'] = results[0].state;
+                    res.redirect('/hirer');
+                })
+            }
         } else {
             res.render('login', {
                 title: "Home",
@@ -116,7 +125,6 @@ app.get('/register-driver', function (req, res) {
 });
 
 app.post('/register', function (req, res) {
-    console.log(req.body);
     let pwd = req.body.pwd;
     let type = req.body.type;
     let email = req.body.email;
@@ -171,26 +179,36 @@ app.get('/logout', function (req, res) {
 
 app.get('/driver', function (req, res) {
     if (req.session.user) {
-        res.render('driver', {
-            title: "Home",
-            logged_in: true,
-        });
+        let driver = req.session.user;
+        console.log(driver);
+        const query = `SELECT * FROM trips WHERE(driver_id='${driver.id}' AND status='unconfirmed')`
+        connection.query(query, function (err, results) {
+            res.render('driver', {
+                title: "Home",
+                logged_in: true,
+                requests: results
+            });
+        })
     } else {
         res.redirect('/login');
     }
+});
+
+app.post('/driver', function (req, res) {
+    const query = `UPDATE trips SET status = 'confirmed' WHERE trip_id=${req.body.accepted_trip_id}`
+    connection.query(query, function (err, results) {
+        if (err) throw err;
+        res.redirect('/driver');
+    });
 })
 
 app.get('/hirer', function (req, res) {
     if (req.session.user) {
-        console.log(req.session);
         let hirer = req.session.user;
-        const query = `SELECT * FROM DRIVERS WHERE zip='${hirer.zip}' OR city='${hirer.state}' OR state='${hirer.city}'`
-        console.log(query);
+        const query = `SELECT * FROM drivers WHERE(zip='${hirer.zip}' OR city='${hirer.state}' OR state='${hirer.city}')`
         connection.query(query, function (err, results) {
-            console.log(results);
             res.render('hirer', {
                 title: "Home",
-                uname: req.session.user.uname,
                 logged_in: true,
                 nearby: results
             });
@@ -211,8 +229,40 @@ app.get('/book', function (req, res) {
     } else {
         res.redirect('/login');
     }
-})
+});
 
+app.post('/book', function (req, res) {
+    let load = {
+        hirerid: req.session.user.id,
+        weight: req.body.loadwt,
+        type: req.body.loadtype
+    }
+    let trip = req.body;
+
+    delete trip.loadwt;
+    delete trip.loadtype;
+    trip.pickuptime = trip.pickuptime.replace('T', ' ') + ':00';
+    trip.status = "unconfirmed";
+
+    let driver_id = 1;
+
+
+    connection.query(`INSERT INTO loads VALUES(NULL, ?)`, [Object.values(load)], function (err, results) {
+        if (err) throw err;
+        else {
+            connection.query(`SELECT LAST_INSERT_ID()`, function (err, results) {
+                if (err) throw err;
+                else {
+                    let load_id = results[0]['LAST_INSERT_ID()'];
+                    connection.query(`INSERT INTO trips VALUES(NULL, ?, ${driver_id}, ${load_id})`, [Object.values(trip)], function (err, results) {
+                        if (err) throw err;
+                    })
+                }
+            })
+        }
+    })
+    res.redirect('/hirer');
+});
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)

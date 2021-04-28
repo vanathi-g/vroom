@@ -2,7 +2,7 @@
 
 <div class="px-4 py-5 my-5 bg-light" style="border-radius: 0.5em;">
     <!-- <img class="d-block mx-auto mb-4" src="images/maps.jpg" alt="" width="400" height="400" /> -->
-    <h4 class="display-6 fw-bold">Welcome, <%= uname %></h4>
+    <h4 class="display-6 fw-bold">Welcome!</h4>
     <hr>
     <div>
         <h5>Nearby</h5>
@@ -10,7 +10,11 @@
             <tbody>
                 <% nearby.forEach( driver => { %>
                 <tr>
-                    <td><%= driver.name %> - <%= driver.location %></td>
+                    <td><%= driver.fname %></td>
+                    <td><%= driver.zip %></td>
+                    <td><%= driver.truckname %></td>
+                    <td><%= driver.capacity %></td>
+                    <td><%= driver.loadType %></td>
                 </tr>
                 <% }) %>
             </tbody>
