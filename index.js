@@ -26,7 +26,7 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     cookie: {
-        maxAge: 60000
+        maxAge: 24 * 60 * 60 * 1000
     }
 }));
 
@@ -209,7 +209,6 @@ app.post('/driver', function (req, res) {
 
 app.get('/hirer', function (req, res) {
     if (req.session.user) {
-        console.log(req.session);
         let hirer = req.session.user;
         const query1 = `SELECT * FROM drivers WHERE(zip='${hirer.zip}' OR city='${hirer.state}' OR state='${hirer.city}')`
         connection.query(query1, function (err, nearby) {
@@ -217,7 +216,6 @@ app.get('/hirer', function (req, res) {
             const query2 = `SELECT loads.load_id, destAddress, destZip, destCity, destState, status FROM trips, loads WHERE(hirer_id=${hirer.id} AND trips.load_id=loads.load_id)`
             connection.query(query2, function (err, booked) {
                 if (err) throw err;
-                console.log(hirer.id, query2);
                 res.render('hirer', {
                     title: "Home",
                     logged_in: true,
@@ -245,6 +243,7 @@ app.get('/book', function (req, res) {
 });
 
 app.post('/book', function (req, res) {
+    let auction = req.body.auction;
     let load = {
         hirerid: req.session.user.id,
         weight: req.body.loadwt,
@@ -254,26 +253,113 @@ app.post('/book', function (req, res) {
 
     delete trip.loadwt;
     delete trip.loadtype;
+    delete trip.auction;
+
     trip.pickuptime = trip.pickuptime.replace('T', ' ') + ':00';
     trip.status = "unconfirmed";
+    if (auction) {
+        trip.status = "bidding";
+        let driver_id = -1; // dummy id for things being auctioned
+        connection.query(`INSERT INTO loads VALUES(NULL, ?)`, [Object.values(load)], function (err, results) {
+            if (err) throw err;
+            else {
+                connection.query(`SELECT LAST_INSERT_ID()`, function (err, results) {
+                    if (err) throw err;
+                    else {
+                        let load_id = results[0]['LAST_INSERT_ID()'];
+                        connection.query(`INSERT INTO trips VALUES(NULL, ?, ${driver_id}, ${load_id})`, [Object.values(trip)], function (err, results) {
+                            if (err) throw err;
+                            else {
+                                connection.query(`SELECT LAST_INSERT_ID()`, function (err, results) {
+                                    if (err) throw err;
+                                    else {
+                                        let trip_id = results[0]['LAST_INSERT_ID()'];
+                                        connection.query(`INSERT INTO bids VALUES(${trip_id}, ${driver_id}, 0)`, [Object.values(trip)], function (err, results) {
+                                            if (err) throw err;
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+    else {
+        connection.query(`SELECT zip FROM hirers WHERE id = ${load.hirerid}`, function (err, results) {
+            if (err) throw err;
+            let zip = results[0]['zip'];
 
-    let driver_id = 1;
-
-    connection.query(`INSERT INTO loads VALUES(NULL, ?)`, [Object.values(load)], function (err, results) {
-        if (err) throw err;
-        else {
-            connection.query(`SELECT LAST_INSERT_ID()`, function (err, results) {
+            connection.query(`SELECT * FROM drivers WHERE(capacity >= ${load.weight} AND loadtype = '${load.type}' AND CAST(zip AS UNSIGNED) BETWEEN ${zip - 2} AND ${zip + 2})`, function (err, results) {
                 if (err) throw err;
-                else {
-                    let load_id = results[0]['LAST_INSERT_ID()'];
-                    connection.query(`INSERT INTO trips VALUES(NULL, ?, ${driver_id}, ${load_id})`, [Object.values(trip)], function (err, results) {
-                        if (err) throw err;
-                    })
-                }
-            })
-        }
-    })
+                let driver_id = results[0]['id'];
+
+                connection.query(`INSERT INTO loads VALUES(NULL, ?)`, [Object.values(load)], function (err, results) {
+                    if (err) throw err;
+                    else {
+                        connection.query(`SELECT LAST_INSERT_ID()`, function (err, results) {
+                            if (err) throw err;
+                            else {
+                                let load_id = results[0]['LAST_INSERT_ID()'];
+                                connection.query(`INSERT INTO trips VALUES(NULL, ?, ${driver_id}, ${load_id})`, [Object.values(trip)], function (err, results) {
+                                    if (err) throw err;
+                                })
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    }
     res.redirect('/hirer');
+});
+
+app.get('/auction', function (req, res) {
+    if (req.session.user && req.session.user.type == "driver") {
+        let driver = req.session.user;
+        const query = `SELECT trips.trip_id, destAddress, destCity, destState, destZip, pickuptime, highestbid FROM trips, bids WHERE(trips.trip_id = bids.trip_id AND status='bidding')`
+        connection.query(query, function (err, auctions) {
+            if (err) throw err;
+            res.render('auction', {
+                title: "Auction",
+                logged_in: true,
+                auctions: auctions
+            });
+        });
+    } else {
+        res.redirect('/login');
+    }
+});
+
+app.post('/auction', function (req, res) {
+    console.log(req.body.previous, req.body.amount)
+    if (parseInt(req.body.previous) > parseInt(req.body.amount)) {
+        const query = `UPDATE bids SET highestbid = '${req.body.amount}', driver_id = '${req.session.user.id}' WHERE trip_id=${req.body.trip_id}`
+        connection.query(query, function (err, results) {
+            if (err) throw err;
+            res.redirect('/auction');
+        });
+    }
+    else {
+        res.redirect('/auction');
+    }
+});
+
+//About and Contact
+
+app.get('/about', function (req, res) {
+    res.render('about', {
+        title: "About",
+        logged_in: session.user ? true : false
+    });
+});
+
+app.get('/contact', function (req, res) {
+    res.render('contact', {
+        title: "Contact Us",
+        logged_in: session.user ? true : false
+    });
 });
 
 app.listen(port, () => {

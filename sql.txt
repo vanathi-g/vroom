@@ -59,6 +59,97 @@ CREATE TABLE trips(
   load_id INT NOT NULL
 );
 
-list of requests
+CREATE TABLE bids(
+  trip_id INT PRIMARY KEY,
+  driver_id INT NOT NULL,
+  highestbid INT NOT NULL
+);
 
-INSERT INTO accounts VALUES("admin", "hirer", "adminpass", "admin@mail.com");
+INSERT INTO hirers VALUES(NULL,'Vignesh','No.245 VGP Nagar','Chennai','Tamil Nadu','600001','9876543210');
+INSERT INTO hirers VALUES(NULL,'Veera','No.123 Anna Nagar','Chennai','Tamil Nadu','600001','98433354651');
+INSERT INTO hirers VALUES(NULL,'Raghavan','No.124 Sea breeze Nagar','Chennai','Tamil Nadu','600002','9878114252');
+INSERT INTO hirers VALUES(NULL,'Susmithaa','No.152 Villa Nagar','Chennai','Tamil Nadu','600003','9446679539');
+INSERT INTO hirers VALUES(NULL,'Vanathi','No.256 Hifi Nagar','Chennai','Tamil Nadu','600004','8939874771');
+INSERT INTO hirers VALUES(NULL,'Vijay','No.285 V Nagar','Tiruvallur','Tamil Nadu','600005','9123465272');
+INSERT INTO hirers VALUES(NULL,'Ajith','No.445 KG Nagar','Kancheepuram','Tamil Nadu','600006','9889154321');
+INSERT INTO hirers VALUES(NULL,'Rajini','No.244 VGP Nagar','Salem','Tamil Nadu','600007','9854321652');
+INSERT INTO hirers VALUES(NULL,'Mukesh','No.256 River Nagar','Coimbatore','Tamil Nadu','600008','8841154321');
+INSERT INTO hirers VALUES(NULL,'Ambani','No.24 Sea Nagar','Madurai','Tamil Nadu','600009','9841357952');
+INSERT INTO hirers VALUES(NULL,'Ratan','No.45 Lake Nagar','Madurai','Tamil Nadu','600009','9841144452');
+INSERT INTO hirers VALUES(NULL,'Tata','No.25 MIM Nagar','Salem','Tamil Nadu','600007','8962114212');
+INSERT INTO hirers VALUES(NULL,'Nedumaaran','No.2455 VIP Nagar','Kancheepuram','Tamil Nadu','600006','9842277212');
+INSERT INTO hirers VALUES(NULL,'Vetri','No.2 MGR Nagar','Chennai','Tamil Nadu','600002','9343334652');
+INSERT INTO hirers VALUES(NULL,'Adani','No.5 XYZ Nagar','Chennai','Tamil Nadu','600002','9449244253');
+INSERT INTO hirers VALUES(NULL,'Anand','No.4 Ram Nagar','Chennai','Tamil Nadu','600001','9841134252');
+INSERT INTO hirers VALUES(NULL,'Sen','No.153 Villa Nagar','Chennai','Tamil Nadu','600003','9842114152');
+INSERT INTO hirers VALUES(NULL,'Vanitha','No.254 Hifi Nagar','Chennai','Tamil Nadu','600004','9732118952');
+INSERT INTO hirers VALUES(NULL,'Vijayakumar','No.287 V Nagar','Tiruvallur','Tamil Nadu','600005','9841144545');
+INSERT INTO hirers VALUES(NULL,'Ajithkumar','No.449 KG Nagar','Kancheepuram','Tamil Nadu','600006','9822345252');
+INSERT INTO hirers VALUES(NULL,'RajiniKanth','No.24 VGP Nagar','Salem','Tamil Nadu','600007','9847874652');
+
+
+INSERT into drivers VALUES(NULL,'Somu','No 1 ABC Nagar','Chennai','Tamil Nadu','600001','1141145262','Tata Ace',10000,'farm');
+INSERT into drivers VALUES(NULL,'Ramu','No 2 ABC Nagar','Chennai','Tamil Nadu','600001','1241145262','Tata Intra',20000,'cold');
+INSERT into drivers VALUES(NULL,'Damu','No 3 ABC Nagar','Chennai','Tamil Nadu','600001','1341145262','Tata 400',30000,'cold');
+INSERT into drivers VALUES(NULL,'Hari','No 4 ABC Nagar','Chennai','Tamil Nadu','600002','1441145262','Tata Ace',10000,'farm');
+INSERT into drivers VALUES(NULL,'Krishna','No 5 ABC Nagar','Chennai','Tamil Nadu','600002','1541145262','Tata Intra',20000,'construction');
+INSERT into drivers VALUES(NULL,'Monu','No 6 ABC Nagar','Chennai','Tamil Nadu','600002','1641145262','Tata 400',30000,'other');
+INSERT into drivers VALUES(NULL,'Ronu','No 7 ABC Nagar','Chennai','Tamil Nadu','600003','1741145262','Tata Ace',10000,'cold');
+INSERT into drivers VALUES(NULL,'Tom','No 8 ABC Nagar','Chennai','Tamil Nadu','600003','1841145262','Tata Intra',20000,'cold');
+INSERT into drivers VALUES(NULL,'John','No 9 ABC Nagar','Chennai','Tamil Nadu','600004','1941145262','Tata Ace',10000,'farm');
+INSERT into drivers VALUES(NULL,'Velan','No 10 ABC Nagar','Chennai','Tamil Nadu','600004','2041145262','Tata Intra',20000,'other');
+INSERT into drivers VALUES(NULL,'Krish','No 11 ABC Nagar','Chennai','Tamil Nadu','600004','2141145262','Tata 400',30000,'construction');
+INSERT into drivers VALUES(NULL,'Kishore','No 12 ABC Nagar','Tiruvallur','Tamil Nadu','600005','2241145262','Tata Ace',10000,'other');
+INSERT into drivers VALUES(NULL,'Sam','No 13 ABC Nagar','Tiruvallur','Tamil Nadu','600005','2341145262','Tata Intra',20000,'farm');
+INSERT into drivers VALUES(NULL,'Irfan','No 14 ABC Nagar','Kancheepuram','Tamil Nadu','600006','2441145262','Tata Ace',10000,'farm');
+INSERT into drivers VALUES(NULL,'Ram Kannan','No 15 ABC Nagar','Kancheepuram','Tamil Nadu','600006','2541145262','Tata Intra',20000,'construction');
+INSERT into drivers VALUES(NULL,'Abdul','No 16 ABC Nagar','Salem','Tamil Nadu','600007','2641145262','Tata Ace',10000,'construction');
+INSERT into drivers VALUES(NULL,'Shan','No 17 ABC Nagar','Salem','Tamil Nadu','600007','2741145262','Tata Intra',20000,'construction');
+INSERT into drivers VALUES(NULL,'Bhaskar','No 18 ABC Nagar','Coimbatore','Tamil Nadu','600008','2841145262','Tata Ace',10000,'other');
+INSERT into drivers VALUES(NULL,'Sriii','No 19 ABC Nagar','Coimbatore','Tamil Nadu','600008','2941145262','Tata Intra',20000,'cold');
+INSERT into drivers VALUES(NULL,'Sreehari','No 20 ABC Nagar','Madurai','Tamil Nadu','600009','3041145262','Tata Ace',10000,'cold');
+INSERT into drivers VALUES(NULL,'Sreeharvel','No 21 ABC Nagar','Madurai','Tamil Nadu','600009','3141145262','Tata Intra',20000,'other');
+
+
+INSERT INTO accounts VALUES(1,'hirer','pass','hirer1@gmail.com');
+INSERT INTO accounts VALUES(2,'hirer','pass','hirer2@gmail.com');
+INSERT INTO accounts VALUES(3,'hirer','pass','hirer3@gmail.com');
+INSERT INTO accounts VALUES(4,'hirer','pass','hirer4@gmail.com');
+INSERT INTO accounts VALUES(5,'hirer','pass','hirer5@gmail.com');
+INSERT INTO accounts VALUES(6,'hirer','pass','hirer6@gmail.com');
+INSERT INTO accounts VALUES(7,'hirer','pass','hirer7@gmail.com');
+INSERT INTO accounts VALUES(8,'hirer','pass','hirer8@gmail.com');
+INSERT INTO accounts VALUES(9,'hirer','pass','hirer9@gmail.com');
+INSERT INTO accounts VALUES(10,'hirer','pass','hirer10@gmail.com');
+INSERT INTO accounts VALUES(11,'hirer','pass','hirer11@gmail.com');
+INSERT INTO accounts VALUES(12,'hirer','pass','hirer12@gmail.com');
+INSERT INTO accounts VALUES(13,'hirer','pass','hirer13@gmail.com');
+INSERT INTO accounts VALUES(14,'hirer','pass','hirer14@gmail.com');
+INSERT INTO accounts VALUES(15,'hirer','pass','hirer15@gmail.com');
+INSERT INTO accounts VALUES(16,'hirer','pass','hirer16@gmail.com');
+INSERT INTO accounts VALUES(17,'hirer','pass','hirer17@gmail.com');
+INSERT INTO accounts VALUES(18,'hirer','pass','hirer18@gmail.com');
+INSERT INTO accounts VALUES(19,'hirer','pass','hirer19@gmail.com');
+INSERT INTO accounts VALUES(20,'hirer','pass','hirer20@gmail.com');
+
+
+INSERT INTO accounts VALUES(1,'driver','pass','driver1@gmail.com');
+INSERT INTO accounts VALUES(2,'driver','pass','driver2@gmail.com');
+INSERT INTO accounts VALUES(3,'driver','pass','driver3@gmail.com');
+INSERT INTO accounts VALUES(4,'driver','pass','driver4@gmail.com');
+INSERT INTO accounts VALUES(5,'driver','pass','driver5@gmail.com');
+INSERT INTO accounts VALUES(6,'driver','pass','driver6@gmail.com');
+INSERT INTO accounts VALUES(7,'driver','pass','driver7@gmail.com');
+INSERT INTO accounts VALUES(8,'driver','pass','driver8@gmail.com');
+INSERT INTO accounts VALUES(9,'driver','pass','driver9@gmail.com');
+INSERT INTO accounts VALUES(10,'driver','pass','driver10@gmail.com');
+INSERT INTO accounts VALUES(11,'driver','pass','driver11@gmail.com');
+INSERT INTO accounts VALUES(12,'driver','pass','driver12@gmail.com');
+INSERT INTO accounts VALUES(13,'driver','pass','driver13@gmail.com');
+INSERT INTO accounts VALUES(14,'driver','pass','driver14@gmail.com');
+INSERT INTO accounts VALUES(15,'driver','pass','driver15@gmail.com');
+INSERT INTO accounts VALUES(16,'driver','pass','driver16@gmail.com');
+INSERT INTO accounts VALUES(17,'driver','pass','driver17@gmail.com');
+INSERT INTO accounts VALUES(18,'driver','pass','driver18@gmail.com');
+INSERT INTO accounts VALUES(19,'driver','pass','driver19@gmail.com');
+INSERT INTO accounts VALUES(20,'driver','pass','driver20@gmail.com');

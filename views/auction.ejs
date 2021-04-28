@@ -1,0 +1,45 @@
+<%- include('header') %>
+
+<div class="px-4 py-5 my-5 bg-light" style="border-radius: 0.5em;">
+    <!-- <img class="d-block mx-auto mb-4" src="images/maps.jpg" alt="" width="400" height="400" /> -->
+    <h4 class="display-6 fw-bold">Welcome!</h4>
+    <div>
+        <h5>Auctions</h5>
+        <table id="auctions" class="details-table">
+            <tbody>
+                <% auctions.forEach( trip => { %>
+                <tr id="<%= trip.trip_id %>">
+                    <td><%= trip.destAddress %></td>
+                    <td><%= trip.destCity %></td>
+                    <td><%= trip.destState %></td>
+                    <td><%= trip.destZip %></td>
+                    <td><%= trip.pickuptime %></td>
+                    <td><%= trip.highestbid %></td>
+                    <td><input type="number" id="<%= trip.trip_id %>-bid" value="0"></td>
+                    <td><button onclick="bid(event)">Bid</button></td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        <form id="bid-form" method="post" action="/auction">
+            <input id="bid-amount" type="hidden" name="amount" value="">
+            <input id="bid-trip-id" type="hidden" name="trip_id" value="">
+            <input id="bid-previous" type="hidden" name="previous" value="">
+        </form>
+    </div>
+</div>
+</div>
+<script>
+    function bid(event){
+        let selected = event.target.parentNode.parentNode;
+        const trip_id = selected.id;
+        const bid_amount = document.getElementById(trip_id+'-bid').value;
+        const previous = selected.children[5].textContent;
+
+        document.getElementById('bid-amount').value = bid_amount;
+        document.getElementById('bid-trip-id').value = trip_id;
+        document.getElementById('bid-previous').value = previous;
+        document.getElementById('bid-form').submit();
+    }
+</script>
+<% include('footer') %>
