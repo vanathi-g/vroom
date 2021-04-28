@@ -180,22 +180,27 @@ app.get('/logout', function (req, res) {
 app.get('/driver', function (req, res) {
     if (req.session.user) {
         let driver = req.session.user;
-        const query = `SELECT * FROM trips WHERE(driver_id='${driver.id}' AND status='unconfirmed')`
-        connection.query(query, function (err, results) {
-            res.render('driver', {
-                title: "Home",
-                logged_in: true,
-                requests: results,
-                upcoming: upcoming
+        const query1 = `SELECT * FROM trips WHERE(driver_id='${driver.id}' AND status='unconfirmed')`
+        connection.query(query1, function (err, requests) {
+            if (err) throw err;
+            const query2 = `SELECT * FROM trips WHERE(driver_id='${driver.id}' AND (status='confirmed' OR status='transit'))`
+            connection.query(query2, function (err, upcoming) {
+                if (err) throw err;
+                res.render('driver', {
+                    title: "Home",
+                    logged_in: true,
+                    requests: requests,
+                    upcoming: upcoming
+                });
             });
-        })
+        });
     } else {
         res.redirect('/login');
     }
 });
 
 app.post('/driver', function (req, res) {
-    const query = `UPDATE trips SET status = 'confirmed' WHERE trip_id=${req.body.accepted_trip_id}`
+    const query = `UPDATE trips SET status = '${req.body.trip_status}' WHERE trip_id=${req.body.trip_id}`
     connection.query(query, function (err, results) {
         if (err) throw err;
         res.redirect('/driver');
@@ -204,13 +209,21 @@ app.post('/driver', function (req, res) {
 
 app.get('/hirer', function (req, res) {
     if (req.session.user) {
+        console.log(req.session);
         let hirer = req.session.user;
-        const query = `SELECT * FROM drivers WHERE(zip='${hirer.zip}' OR city='${hirer.state}' OR state='${hirer.city}')`
-        connection.query(query, function (err, results) {
-            res.render('hirer', {
-                title: "Home",
-                logged_in: true,
-                nearby: results
+        const query1 = `SELECT * FROM drivers WHERE(zip='${hirer.zip}' OR city='${hirer.state}' OR state='${hirer.city}')`
+        connection.query(query1, function (err, nearby) {
+            if (err) throw err;
+            const query2 = `SELECT loads.load_id, destAddress, destZip, destCity, destState, status FROM trips, loads WHERE(hirer_id=${hirer.id} AND trips.load_id=loads.load_id)`
+            connection.query(query2, function (err, booked) {
+                if (err) throw err;
+                console.log(hirer.id, query2);
+                res.render('hirer', {
+                    title: "Home",
+                    logged_in: true,
+                    nearby: nearby,
+                    booked: booked
+                });
             });
         });
     } else {
@@ -243,6 +256,8 @@ app.post('/book', function (req, res) {
     delete trip.loadtype;
     trip.pickuptime = trip.pickuptime.replace('T', ' ') + ':00';
     trip.status = "unconfirmed";
+
+    let driver_id = 1;
 
     connection.query(`INSERT INTO loads VALUES(NULL, ?)`, [Object.values(load)], function (err, results) {
         if (err) throw err;

@@ -83,3 +83,26 @@
 .reg-card .card-header{
     padding: 10px 50px;
 }
+
+/* Driver and hirer homepages */
+.details-table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  .details-table td, .details-table th{
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  .details-table tr:nth-child(even){background-color: #f2f2f2;}
+  
+  .details-table tr:hover {background-color: #ddd;}
+  
+  .details-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+  }

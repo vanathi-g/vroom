@@ -6,7 +6,7 @@
     <hr>
     <div>
         <h5>Nearby</h5>
-        <table>
+        <table id="nearby" class="details-table">
             <tbody>
                 <% nearby.forEach( driver => { %>
                 <tr>
@@ -14,8 +14,23 @@
                     <td><%= driver.zip %></td>
                     <td><%= driver.truckname %></td>
                     <td><%= driver.capacity %></td>
-                    <td><%= driver.loadType %></td>
+                    <td><%= driver.loadtype %></td>
                 </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        <h5>Track your deliveries:</h5>
+        <table id="booked" class="details-table">
+            <tbody>
+                <% booked.forEach( driver => { %>
+                    <tr>
+                        <td><%= driver.load_id %></td>
+                        <td><%= driver.destAddress %></td>
+                        <td><%= driver.destZip %></td>
+                        <td><%= driver.destCity %></td>
+                        <td><%= driver.destState %></td>
+                        <td><%= driver.status %></td>
+                    </tr>
                 <% }) %>
             </tbody>
         </table>

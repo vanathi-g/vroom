@@ -5,7 +5,7 @@
     <h4 class="display-6 fw-bold">Welcome!</h4>
     <hr>
     <div id="requests">
-        <table id="request">
+        <table id="request" class="details-table">
             <tbody>
                 <% requests.forEach( trip => { %>
                 <tr>
@@ -15,12 +15,14 @@
                     <td><%= trip.destState %></td>
                     <td><%= trip.destZip %></td>
                     <td><%= trip.pickuptime %></td>
-                    <td><button onclick='acceptTrip(event)'>Accept</button></td>
+                    <td><button onclick='updateStatus(event, "confirmed")'>Accept</button></td>
                 </tr>
                 <% }) %>
             </tbody>
         </table>
-        <!-- <table id="upcoming">
+    </div>
+    <div id="upcoming">
+        <table id="upcoming" class="details-table">
             <tbody>
                 <% upcoming.forEach( trip => { %>
                 <tr>
@@ -30,23 +32,28 @@
                     <td><%= trip.destState %></td>
                     <td><%= trip.destZip %></td>
                     <td><%= trip.pickuptime %></td>
-                    <% if(trip.status == "confirmed") 
-                    <td><button onclick='acceptTrip(event)'>Start</button></td>
+                    <% if (trip.status == "confirmed") { %>
+                        <td><button onclick='updateStatus(event, "transit")'>Start</button></td>
+                    <% } else { %>
+                        <td><button onclick='updateStatus(event, "delivered")'>End</button></td>
+                    <% } %>
                 </tr>
                 <% }) %>
             </tbody>
-        </table> -->
+        </table>
     </div>
-    <form id="accept-trip-form" method="post" action="/driver">
-        <input id="accept-trip-id" type="hidden" name="accepted_trip_id" value="">
+    <form id="trip-form" method="post" action="/driver">
+        <input id="trip-id" type="hidden" name="trip_id" value="">
+        <input id="trip-status" type="hidden" name="trip_status" value="">
     </form>
 </div>
 </div>
 <script>
-    function acceptTrip(event){
+    function updateStatus(event, status){
         let trip_id = event.target.parentNode.parentNode.firstChild.nextSibling.textContent;
-        document.getElementById('accept-trip-id').value = trip_id;
-        document.getElementById('accept-trip-form').submit();
+        document.getElementById('trip-id').value = trip_id;
+        document.getElementById('trip-status').value = status;
+        document.getElementById('trip-form').submit();
     }
 </script>
 
