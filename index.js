@@ -1,7 +1,9 @@
 require("dotenv").config();
 
+const { SSL_OP_EPHEMERAL_RSA } = require("constants");
 const express = require('express')
-const session = require('express-session')
+const session = require('express-session');
+const { request } = require("http");
 const mysql = require('mysql')
 const app = express()
 const port = 3000
@@ -177,20 +179,40 @@ app.get('/logout', function (req, res) {
 
 // Home Pages for Driver and Hirer
 
+function groupLoads(results) {
+    if (results.length == 0)
+        return results;
+    let grouped = {};
+    let prev = results[0].trip_id;
+    let loads = [];
+    results.forEach(result => {
+        if (result.trip_id !== prev) {
+            grouped[prev] = loads;
+            loads = [];
+            prev = result.trip_id;
+        }
+        let load = result;
+        delete result.trip_id;
+        loads.push(load);
+    });
+    grouped[prev] = loads;
+    return grouped;
+}
+
 app.get('/driver', function (req, res) {
     if (req.session.user) {
         let driver = req.session.user;
-        const query1 = `SELECT * FROM trips WHERE(driver_id='${driver.id}' AND status='unconfirmed')`
+        const query1 = `SELECT * FROM trips, loads WHERE driver_id = '${driver.id}' AND status='unconfirmed' AND trips.trip_id = loads.trip_id ORDER BY trips.trip_id;`
         connection.query(query1, function (err, requests) {
             if (err) throw err;
-            const query2 = `SELECT * FROM trips WHERE(driver_id='${driver.id}' AND (status='confirmed' OR status='transit'))`
+            const query2 = `SELECT * FROM trips, loads WHERE driver_id = '${driver.id}' AND (status='confirmed' OR status='transit') AND trips.trip_id = loads.trip_id ORDER BY trips.trip_id;`
             connection.query(query2, function (err, upcoming) {
                 if (err) throw err;
                 res.render('driver', {
                     title: "Home",
                     logged_in: true,
-                    requests: requests,
-                    upcoming: upcoming
+                    requests: groupLoads(requests),
+                    upcoming: groupLoads(upcoming)
                 });
             });
         });
@@ -213,10 +235,10 @@ app.get('/hirer', function (req, res) {
         const query1 = `SELECT * FROM drivers WHERE(zip='${hirer.zip}' OR city='${hirer.state}' OR state='${hirer.city}')`
         connection.query(query1, function (err, nearby) {
             if (err) throw err;
-            const query2 = `SELECT loads.load_id, destAddress, destZip, destCity, destState, status FROM trips, loads WHERE(hirer_id=${hirer.id} AND trips.load_id=loads.load_id)`
+            const query2 = `SELECT loads.load_id, destAddress, destZip, destCity, destState, status FROM trips, loads WHERE(hirer_id=${hirer.id} AND trips.trip_id=loads.trip_id)`
             connection.query(query2, function (err, booked) {
                 if (err) throw err;
-                const query3 = `SELECT trips.trip_id, destAddress, destCity, destState, destZip, pickuptime, highestbid FROM trips, bids WHERE(trips.trip_id = bids.trip_id AND status='bidding')`
+                const query3 = `SELECT loads.trip_id, destAddress, destCity, destState, destZip, pickuptime, highestbid FROM loads, bids, trips WHERE(trips.trip_id = bids.trip_id AND loads.trip_id = trips.trip_id AND status='bidding')`
                 connection.query(query3, function (err, auctions) {
                     if (err) throw err;
                     res.render('hirer', {
@@ -226,6 +248,7 @@ app.get('/hirer', function (req, res) {
                         booked: booked,
                         auctions: auctions
                     });
+
                 });
             });
         });
@@ -261,73 +284,79 @@ app.get('/book', function (req, res) {
     }
 });
 
+
+
 app.post('/book', function (req, res) {
     let auction = req.body.auction;
-    let load = {
-        hirerid: req.session.user.id,
-        weight: req.body.loadwt,
-        type: req.body.loadtype
-    }
-    let trip = req.body;
+    let hirerid = req.session.user.id;
+    let load = req.body;
+    delete load.auction;
 
-    delete trip.loadwt;
-    delete trip.loadtype;
-    delete trip.auction;
+    load.pickuptime = load.pickuptime.replace('T', ' ') + ':00';
 
-    trip.pickuptime = trip.pickuptime.replace('T', ' ') + ':00';
-    trip.status = "unconfirmed";
     if (auction) {
-        trip.status = "bidding";
-        let driver_id = -1; // dummy id for things being auctioned
-        connection.query(`INSERT INTO loads VALUES(NULL, ?)`, [Object.values(load)], function (err, results) {
+        connection.query(`INSERT INTO trips VALUES(NULL, 'bidding', -1)`, function (err, results) {
             if (err) throw err;
-            else {
-                connection.query(`SELECT LAST_INSERT_ID()`, function (err, results) {
+
+            connection.query(`SELECT LAST_INSERT_ID()`, function (err, results) {
+                if (err) throw err;
+                let trip_id = results[0]['LAST_INSERT_ID()'];
+
+                const query1 = `INSERT INTO loads VALUES(NULL, ?, ${hirerid}, ${trip_id})`;
+                connection.query(query1, [Object.values(load)], function (err, results) {
                     if (err) throw err;
-                    else {
-                        let load_id = results[0]['LAST_INSERT_ID()'];
-                        connection.query(`INSERT INTO trips VALUES(NULL, ?, ${driver_id}, ${load_id})`, [Object.values(trip)], function (err, results) {
-                            if (err) throw err;
-                            else {
-                                connection.query(`SELECT LAST_INSERT_ID()`, function (err, results) {
-                                    if (err) throw err;
-                                    else {
-                                        let trip_id = results[0]['LAST_INSERT_ID()'];
-                                        connection.query(`INSERT INTO bids VALUES(${trip_id}, ${driver_id}, 0)`, [Object.values(trip)], function (err, results) {
-                                            if (err) throw err;
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    }
+                    const query2 = `INSERT INTO bids VALUES(${trip_id}, -1, 0)`;
+                    connection.query(query2, function (err, results) {
+                        if (err) throw err;
+                    });
+
                 });
-            }
+            });
         });
     }
     else {
-        connection.query(`SELECT zip FROM hirers WHERE id = ${load.hirerid}`, function (err, results) {
+        const query1 = `SELECT zip FROM hirers WHERE id = ${hirerid}`;
+        connection.query(query1, function (err, results) {
             if (err) throw err;
             let zip = results[0]['zip'];
 
-            connection.query(`SELECT * FROM drivers WHERE(capacity >= ${load.weight} AND loadtype = '${load.type}' AND CAST(zip AS UNSIGNED) BETWEEN ${zip - 2} AND ${zip + 2})`, function (err, results) {
+            const query2 = `SELECT trip_id from drivers d, trips t WHERE(capacity > ((SELECT SUM(weight) FROM loads, trips WHERE (trips.trip_id = loads.trip_id AND trips.status='unconfirmed' and driver_id = d.id) GROUP BY driver_id) + ${load.loadwt}) AND loadtype = '${load.loadtype}' AND CAST(zip AS UNSIGNED) BETWEEN ${zip - 2} AND ${zip + 2}) AND t.driver_id = d.id`
+            connection.query(query2, function (err, results) {
                 if (err) throw err;
-                let driver_id = results[0]['id'];
 
-                connection.query(`INSERT INTO loads VALUES(NULL, ?)`, [Object.values(load)], function (err, results) {
-                    if (err) throw err;
-                    else {
-                        connection.query(`SELECT LAST_INSERT_ID()`, function (err, results) {
+                // If no trip already exists where this load can be added
+
+                if (results.length == 0) {
+
+                    const query3 = `SELECT id FROM drivers, trips WHERE(capacity >= ${load.loadwt} AND loadtype = '${load.loadtype}' AND CAST(zip AS UNSIGNED) BETWEEN ${zip - 2} AND ${zip + 2})`
+                    connection.query(query3, function (err, results) {
+                        if (err) throw err;
+
+                        let driver_id = results[0]['id'];
+                        connection.query(`INSERT INTO trips VALUES(NULL, 'unconfirmed', ${driver_id})`, function (err, results) {
                             if (err) throw err;
-                            else {
-                                let load_id = results[0]['LAST_INSERT_ID()'];
-                                connection.query(`INSERT INTO trips VALUES(NULL, ?, ${driver_id}, ${load_id})`, [Object.values(trip)], function (err, results) {
+
+                            connection.query(`SELECT LAST_INSERT_ID()`, function (err, results) {
+                                if (err) throw err;
+                                let trip_id = results[0]['LAST_INSERT_ID()'];
+
+                                const query4 = `INSERT INTO loads VALUES(NULL, ?, ${hirerid}, ${trip_id})`;
+                                connection.query(query4, [Object.values(load)], function (err, results) {
                                     if (err) throw err;
-                                })
-                            }
+                                });
+                            });
                         });
-                    }
-                });
+                    });
+                } else {
+
+                    // Trip sharing - add this load also to the existing trip
+
+                    let trip_id = results[0]['trip_id'];
+                    const query3 = `INSERT INTO loads VALUES(NULL, ?, ${hirerid}, ${trip_id})`;
+                    connection.query(query3, [Object.values(load)], function (err, results) {
+                        if (err) throw err;
+                    })
+                }
             });
         });
     }
@@ -337,7 +366,7 @@ app.post('/book', function (req, res) {
 app.get('/auction', function (req, res) {
     if (req.session.user && req.session.user.type == "driver") {
         let driver = req.session.user;
-        const query = `SELECT trips.trip_id, destAddress, destCity, destState, destZip, pickuptime, highestbid FROM trips, bids WHERE(trips.trip_id = bids.trip_id AND status='bidding')`
+        const query = `SELECT trips.trip_id, destAddress, destCity, destState, destZip, pickuptime, highestbid FROM trips, bids, loads WHERE(trips.trip_id = bids.trip_id AND loads.trip_id = trips.trip_id AND status='bidding')`
         connection.query(query, function (err, auctions) {
             if (err) throw err;
             res.render('auction', {

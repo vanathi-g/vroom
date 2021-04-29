@@ -41,22 +41,22 @@ CREATE TABLE locations(
 );
 
 CREATE TABLE loads(
-  load_id INT AUTO_INCREMENT PRIMARY KEY,
-  hirer_id INT NOT NULL,
-  weight INT NOT NULL,
-  type varchar(50) NOT NULL
-);
+    load_id INT AUTO_INCREMENT PRIMARY KEY,
+    destAddress varchar(100) NOT NULL,
+    destCity varchar(20) NOT NULL,
+    destState varchar(20) NOT NULL,
+    destZip varchar(6) NOT NULL,
+    pickuptime datetime NOT NULL,
+    weight INT NOT NULL,
+    type varchar(50) NOT NULL,
+    hirer_id INT NOT NULL,
+    trip_id INT NOT NULL
+  );
 
 CREATE TABLE trips(
   trip_id INT AUTO_INCREMENT PRIMARY KEY,
-  destAddress varchar(100) NOT NULL,
-  destCity varchar(20) NOT NULL,
-  destState varchar(20) NOT NULL,
-  destZip varchar(6) NOT NULL,
-  pickuptime datetime NOT NULL,
   status varchar(20) NOT NULL,
-  driver_id INT NOT NULL,
-  load_id INT NOT NULL
+  driver_id INT NOT NULL
 );
 
 CREATE TABLE bids(
@@ -153,3 +153,39 @@ INSERT INTO accounts VALUES(17,'driver','pass','driver17@gmail.com');
 INSERT INTO accounts VALUES(18,'driver','pass','driver18@gmail.com');
 INSERT INTO accounts VALUES(19,'driver','pass','driver19@gmail.com');
 INSERT INTO accounts VALUES(20,'driver','pass','driver20@gmail.com');
+
+INSERT INTO trips VALUES(NULL, 'unconfirmed', 1);
+INSERT INTO trips VALUES(NULL, 'unconfirmed', 2);
+
+INSERT INTO loads VALUES(NULL, 'Industry Warehouse', 'Chennai', 'Tamil Nadu', '600008', '2021-04-30 07:00:00', 100, 'farm', 1, 1);
+INSERT INTO loads VALUES(NULL, 'Milk plant', 'Chennai', 'Tamil Nadu', '600005', '2021-04-30 09:00:00', 500, 'farm', 4, 1);
+
+
+SELECT SUM(weight) FROM loads, trips WHERE(trips.trip_id = loads.trip_id AND trips.driver_id = 2);
+
+SELECT driver_id, SUM(weight) FROM loads, trips WHERE(trips.trip_id = loads.trip_id AND trips.status='unconfirmed') GROUP BY driver_id;
+
+nested query?
+
+SELECT id, trip_id from drivers d, trips t
+WHERE
+(
+  capacity > 
+  (
+    SELECT
+      SUM(weight)
+    FROM 
+      loads, trips
+    WHERE
+      (trips.trip_id = loads.trip_id AND trips.status='unconfirmed' and driver_id = d.id)
+    GROUP BY driver_id
+  )
+  AND 
+    loadtype = 'farm' 
+  AND 
+    CAST(zip AS UNSIGNED) BETWEEN 600001 AND 600003
+  AND
+    t.driver_id = d.id
+);
+
+`SELECT * FROM drivers d WHERE(capacity > ((SELECT SUM(weight) FROM loads, trips WHERE (trips.trip_id = loads.trip_id AND trips.status='unconfirmed' and driver_id = d.id) GROUP BY driver_id) + ${load.weight}) AND loadtype = '${load.type}' AND CAST(zip AS UNSIGNED) BETWEEN ${zip - 2} AND ${zip + 2})`

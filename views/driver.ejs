@@ -4,44 +4,68 @@
     <!-- <img class="d-block mx-auto mb-4" src="images/maps.jpg" alt="" width="400" height="400" /> -->
     <h4 class="display-6 fw-bold">Welcome!</h4>
     <hr>
+    <h5>Trip Requests</h5>
     <div id="requests">
         <table id="request" class="details-table">
             <tbody>
-                <% requests.forEach( trip => { %>
-                <tr>
-                    <td><%= trip.trip_id %></td>
-                    <td><%= trip.destAddress %></td>
-                    <td><%= trip.destCity %></td>
-                    <td><%= trip.destState %></td>
-                    <td><%= trip.destZip %></td>
-                    <td><%= trip.pickuptime %></td>
+                <% for (const key in requests) { %>
+                    <tr id="<%= key %>">
+                    <td><%= key %></td>
+                    <td>
+                        <table>
+                            <tbody>
+                                <% for(let i=0; i<requests[key].length; i++) { %>
+                                <tr>
+                                    <td><%= requests[key][i].destAddress %></td>
+                                    <td><%= requests[key][i].destCity %></td>
+                                    <td><%= requests[key][i].destState %></td>
+                                    <td><%= requests[key][i].destZip %></td>
+                                    <td><%= requests[key][i].pickuptime %></td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </td>
                     <td><button onclick='updateStatus(event, "confirmed")'>Accept</button></td>
                 </tr>
-                <% }) %>
+                <% } %>
             </tbody>
         </table>
     </div>
+    <h5>Upcoming Trips</h5>
     <div id="upcoming">
         <table id="upcoming" class="details-table">
             <tbody>
-                <% upcoming.forEach( trip => { %>
-                <tr>
-                    <td><%= trip.trip_id %></td>
-                    <td><%= trip.destAddress %></td>
-                    <td><%= trip.destCity %></td>
-                    <td><%= trip.destState %></td>
-                    <td><%= trip.destZip %></td>
-                    <td><%= trip.pickuptime %></td>
-                    <% if (trip.status == "confirmed") { %>
-                        <td><button onclick='updateStatus(event, "transit")'>Start</button></td>
+                <% for (const key in upcoming) { %>
+                    <tr id="<%= key %>">
+                    <td><%= key %></td>
+                    <td>
+                        <table>
+                            <tbody>
+                                <% for(let i=0; i<upcoming[key].length; i++) { %>
+                                <tr>
+                                    <td><%= upcoming[key][i].destAddress %></td>
+                                    <td><%= upcoming[key][i].destCity %></td>
+                                    <td><%= upcoming[key][i].destState %></td>
+                                    <td><%= upcoming[key][i].destZip %></td>
+                                    <td><%= upcoming[key][i].pickuptime %></td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </td>
+                    <% if (upcoming[key][0].status == "confirmed") { %>
+                    <td><button onclick='updateStatus(event, "transit")'>Start</button></td>
                     <% } else { %>
-                        <td><button onclick='updateStatus(event, "delivered")'>End</button></td>
+                    <td><button onclick='updateStatus(event, "delivered")'>End</button></td>
                     <% } %>
                 </tr>
-                <% }) %>
+                <% } %>
             </tbody>
         </table>
     </div>
+
+
     <form id="trip-form" method="post" action="/driver">
         <input id="trip-id" type="hidden" name="trip_id" value="">
         <input id="trip-status" type="hidden" name="trip_status" value="">
@@ -49,8 +73,8 @@
 </div>
 </div>
 <script>
-    function updateStatus(event, status){
-        let trip_id = event.target.parentNode.parentNode.firstChild.nextSibling.textContent;
+    function updateStatus(event, status) {
+        let trip_id = event.target.parentNode.parentNode.id;
         document.getElementById('trip-id').value = trip_id;
         document.getElementById('trip-status').value = status;
         document.getElementById('trip-form').submit();
