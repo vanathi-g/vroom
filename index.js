@@ -216,11 +216,16 @@ app.get('/hirer', function (req, res) {
             const query2 = `SELECT loads.load_id, destAddress, destZip, destCity, destState, status FROM trips, loads WHERE(hirer_id=${hirer.id} AND trips.load_id=loads.load_id)`
             connection.query(query2, function (err, booked) {
                 if (err) throw err;
-                res.render('hirer', {
-                    title: "Home",
-                    logged_in: true,
-                    nearby: nearby,
-                    booked: booked
+                const query3 = `SELECT trips.trip_id, destAddress, destCity, destState, destZip, pickuptime, highestbid FROM trips, bids WHERE(trips.trip_id = bids.trip_id AND status='bidding')`
+                connection.query(query3, function (err, auctions) {
+                    if (err) throw err;
+                    res.render('hirer', {
+                        title: "Home",
+                        logged_in: true,
+                        nearby: nearby,
+                        booked: booked,
+                        auctions: auctions
+                    });
                 });
             });
         });
@@ -228,6 +233,20 @@ app.get('/hirer', function (req, res) {
         res.redirect('/login');
     }
 });
+
+app.post('/hirer', function (req, res) {
+    const query1 = `SELECT driver_id FROM bids WHERE trip_id=${req.body.trip_id}`
+    connection.query(query1, function (err, results) {
+        const driver_id = results[0]['driver_id'];
+        const query2 = `UPDATE trips SET status = 'unconfirmed', driver_id = ${driver_id} WHERE trip_id=${req.body.trip_id}`
+        connection.query(query2, function (err, results) {
+            if (err) throw err;
+            res.redirect('/hirer');
+        });
+
+    });
+
+})
 
 // Booking page for Hirers
 

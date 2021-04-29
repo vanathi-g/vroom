@@ -19,7 +19,10 @@
                 <% }) %>
             </tbody>
         </table>
-        <h5>Track your deliveries:</h5>
+        <div class="d-grid gap-1 d-sm-flex justify-content-sm-center">
+            <a href="/book" class="btn btn-primary btn-lg px-4 me-sm-3">Book a Truck Now!</a>
+        </div>
+        <h5>Delivery Status</h5>
         <table id="booked" class="details-table">
             <tbody>
                 <% booked.forEach( driver => { %>
@@ -34,11 +37,36 @@
                 <% }) %>
             </tbody>
         </table>
-
-        <div class="d-grid gap-1 d-sm-flex justify-content-sm-center">
-            <a href="/book" class="btn btn-primary btn-lg px-4 me-sm-3">Book a Truck Now!</a>
-        </div>
+        <h5>Your Auctions</h5>
+        <table id="hirer-auctions" class="details-table">
+            <tbody>
+                <tbody>
+                    <% auctions.forEach( trip => { %>
+                    <tr id="<%= trip.trip_id %>">
+                        <td><%= trip.destAddress %></td>
+                        <td><%= trip.destCity %></td>
+                        <td><%= trip.destState %></td>
+                        <td><%= trip.destZip %></td>
+                        <td><%= trip.pickuptime %></td>
+                        <td><%= trip.highestbid %></td>
+                        <td><button onclick="endAuction(event)">End Auction</button></td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </tbody>
+        </table>
+        <form id="auction-form" method="post" action="/hirer">
+            <input id="auction-trip-id" type="hidden" name="trip_id" value="">
+        </form>
     </div>
 </div>
-
+</div>
+<script>
+    function endAuction(event){
+        let selected = event.target.parentNode.parentNode;
+        const trip_id = selected.id;
+        document.getElementById('auction-trip-id').value = trip_id;
+        document.getElementById('auction-form').submit();
+    }
+</script>
 <% include('footer') %>
