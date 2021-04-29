@@ -1,70 +1,79 @@
 <%- include('header') %>
 
-<div class="px-4 py-5 my-5 bg-light" style="border-radius: 0.5em;">
+<div class="px-5 py-5 my-5 bg-light" style="border-radius: 0.5em;">
     <!-- <img class="d-block mx-auto mb-4" src="images/maps.jpg" alt="" width="400" height="400" /> -->
     <h4 class="display-6 fw-bold">Welcome!</h4>
     <hr>
-    <h5>Trip Requests</h5>
-    <div id="requests">
-        <table id="request" class="details-table">
-            <tbody>
-                <% for (const key in requests) { %>
-                    <tr id="<%= key %>">
-                    <td><%= key %></td>
-                    <td>
-                        <table>
-                            <tbody>
-                                <% for(let i=0; i<requests[key].length; i++) { %>
-                                <tr>
-                                    <td><%= requests[key][i].destAddress %></td>
-                                    <td><%= requests[key][i].destCity %></td>
-                                    <td><%= requests[key][i].destState %></td>
-                                    <td><%= requests[key][i].destZip %></td>
-                                    <td><%= requests[key][i].pickuptime %></td>
-                                </tr>
-                                <% } %>
-                            </tbody>
-                        </table>
-                    </td>
-                    <td><button onclick='updateStatus(event, "confirmed")'>Accept</button></td>
-                </tr>
-                <% } %>
-            </tbody>
-        </table>
-    </div>
-    <h5>Upcoming Trips</h5>
-    <div id="upcoming">
-        <table id="upcoming" class="details-table">
-            <tbody>
-                <% for (const key in upcoming) { %>
-                    <tr id="<%= key %>">
-                    <td><%= key %></td>
-                    <td>
-                        <table>
-                            <tbody>
-                                <% for(let i=0; i<upcoming[key].length; i++) { %>
-                                <tr>
-                                    <td><%= upcoming[key][i].destAddress %></td>
-                                    <td><%= upcoming[key][i].destCity %></td>
-                                    <td><%= upcoming[key][i].destState %></td>
-                                    <td><%= upcoming[key][i].destZip %></td>
-                                    <td><%= upcoming[key][i].pickuptime %></td>
-                                </tr>
-                                <% } %>
-                            </tbody>
-                        </table>
-                    </td>
-                    <% if (upcoming[key][0].status == "confirmed") { %>
-                    <td><button onclick='updateStatus(event, "transit")'>Start</button></td>
-                    <% } else { %>
-                    <td><button onclick='updateStatus(event, "delivered")'>End</button></td>
+    <h4 style="color: #555">Trip Requests</h4>
+    <% if (requests.length == 0) { %>
+        <p>-No trip requests yet-</p>
+    <% } else { %>
+        <div id="requests">
+            <table id="request" class="details-table">
+                <tbody class="inner-table">
+                    <% for (const key in requests) { %>
+                        <tr id="<%= key %>">
+                        <td><%= key %></td>
+                        <td>
+                            <table>
+                                <tbody>
+                                    <% for(let i=0; i<requests[key].length; i++) { %>
+                                    <tr>
+                                        <td><%= requests[key][i].destAddress %></td>
+                                        <td><%= requests[key][i].destZip %></td>
+                                        <td><%= requests[key][i].destCity %></td>
+                                        <td><%= requests[key][i].destState %></td>
+                                        <td><%= requests[key][i].pickuptime.toString().slice(0,21) %></td>
+                                    </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td><button class="btn btn-sm btn-outline-dark" onclick='updateStatus(event, "confirmed")'>Accept</button></td>
+                    </tr>
                     <% } %>
-                </tr>
-                <% } %>
-            </tbody>
-        </table>
-    </div>
+                </tbody>
+            </table>
+        </div>
+    <% } %>
+    <br/>
+    <h4 style="color: #555">Upcoming Trips</h4>
+    <% if (upcoming.length == 0) { %>
+        <p>-No upcoming trips-</p>
+    <% } else { %>
+        <div id="upcoming">
+            <table id="upcoming" class="details-table">
+                <tbody>
+                    <% for (const key in upcoming) { %>
+                        <tr id="<%= key %>">
+                        <td><%= key %></td>
+                        <td>
+                            <table class="inner-table">
+                                <tbody>
+                                    <% for(let i=0; i<upcoming[key].length; i++) { %>
+                                    <tr>
+                                        <td><%= upcoming[key][i].destAddress %></td>
+                                        <td><%= upcoming[key][i].destZip %></td>
+                                        <td><%= upcoming[key][i].destCity %></td>
+                                        <td><%= upcoming[key][i].destState %></td>
+                                        <td><%= upcoming[key][i].pickuptime.toString().slice(0,21) %></td>
+                                    </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </td>
+                        <% if (upcoming[key][0].status == "confirmed") { %>
+                        <td><button class="btn btn-sm btn-outline-dark" onclick='updateStatus(event, "transit")'>Start</button></td>
+                        <% } else { %>
+                        <td><button class="btn btn-sm btn-outline-dark" onclick='updateStatus(event, "delivered")'>End</button></td>
+                        <% } %>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
 
+    <% } %>
 
     <form id="trip-form" method="post" action="/driver">
         <input id="trip-id" type="hidden" name="trip_id" value="">

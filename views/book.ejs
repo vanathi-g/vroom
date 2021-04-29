@@ -1,12 +1,12 @@
 <%- include('header') %>
 
-<div class="card">
+<div class="px-5 py-5 my-5 card" style="border-radius: 0.5em;">
     <h5 class="card-header">Book your transportation</h5>
     <div class="card-body">
         <form class="row g-3" method="post" action="/book">
             <div class="col-12">
                 <label for="destAddress" class="form-label">Destination Address</label>
-                <input type="text" class="form-control" id="destAddress" name="destAddress"/>
+                <textarea class="form-control" id="destAddress" name="destAddress"></textarea>
             </div>
             <div class="col-md-4">
                 <label for="destCity" class="form-label">City</label>
@@ -25,7 +25,7 @@
                 <input type="datetime-local" id="pickuptime" name="pickuptime" />
             </div>
             <div class="col-md-6">
-                <label for="loadwt" class="form-label">Weight of Load</label>
+                <label for="loadwt" class="form-label">Weight of Load (kg)</label>
                 <input type="text" class="form-control" id="loadwt" name="loadwt" />
             </div>
             <div class="col-md-12">

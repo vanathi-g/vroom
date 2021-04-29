@@ -1,68 +1,85 @@
 <%- include('header') %>
 
-<div class="px-4 py-5 my-5 bg-light" style="border-radius: 0.5em;">
-    <!-- <img class="d-block mx-auto mb-4" src="images/maps.jpg" alt="" width="400" height="400" /> -->
+<div class="px-5 py-5 my-5 bg-light" style="border-radius: 0.5em;">
     <h4 class="display-6 fw-bold">Welcome!</h4>
     <hr>
-    <div>
-        <h5>Nearby</h5>
-        <table id="nearby" class="details-table">
+    <h4 style="color: #555">Nearby Drivers</h4>
+    <table id="nearby" class="details-table">
+        <tbody>
+            <% nearby.forEach( driver => { %>
+            <tr>
+                <td><%= driver.fname %></td>
+                <td><%= driver.zip %></td>
+                <td><%= driver.truckname %></td>
+                <td><%= driver.capacity %></td>
+                <td><%= driver.loadtype %></td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+    <br />
+    <div class="d-grid gap-1 d-sm-flex justify-content-sm-center">
+        <a href="/book" class="btn btn-dark px-4 me-sm-3">Book a Truck Now!</a>
+    </div>
+    <br />
+    <h4 style="color: #555">Delivery Status</h4>
+    <% if (booked.length == 0) { %>
+        <p>-No deliveries yet-</p>
+    <% } else { %>
+        <table id="booked" class="details-table">
             <tbody>
-                <% nearby.forEach( driver => { %>
+                <% booked.forEach( driver => { %>
                 <tr>
-                    <td><%= driver.fname %></td>
-                    <td><%= driver.zip %></td>
-                    <td><%= driver.truckname %></td>
-                    <td><%= driver.capacity %></td>
-                    <td><%= driver.loadtype %></td>
+                    <td><%= driver.load_id %></td>
+                    <td><%= driver.destAddress %></td>
+                    <td><%= driver.destZip %></td>
+                    <td><%= driver.destCity %></td>
+                    <td><%= driver.destState %></td>
+                    <td><%= driver.status %></td>
                 </tr>
                 <% }) %>
             </tbody>
         </table>
-        <div class="d-grid gap-1 d-sm-flex justify-content-sm-center">
-            <a href="/book" class="btn btn-primary btn-lg px-4 me-sm-3">Book a Truck Now!</a>
-        </div>
-        <h5>Delivery Status</h5>
-        <table id="booked" class="details-table">
-            <tbody>
-                <% booked.forEach( driver => { %>
-                    <tr>
-                        <td><%= driver.load_id %></td>
-                        <td><%= driver.destAddress %></td>
-                        <td><%= driver.destZip %></td>
-                        <td><%= driver.destCity %></td>
-                        <td><%= driver.destState %></td>
-                        <td><%= driver.status %></td>
-                    </tr>
-                <% }) %>
-            </tbody>
-        </table>
-        <h5>Your Auctions</h5>
-        <table id="hirer-auctions" class="details-table">
-            <tbody>
-                <tbody>
-                    <% auctions.forEach( trip => { %>
-                    <tr id="<%= trip.trip_id %>">
-                        <td><%= trip.destAddress %></td>
-                        <td><%= trip.destCity %></td>
-                        <td><%= trip.destState %></td>
-                        <td><%= trip.destZip %></td>
-                        <td><%= trip.pickuptime %></td>
-                        <td><%= trip.highestbid %></td>
-                        <td><button onclick="endAuction(event)">End Auction</button></td>
-                    </tr>
-                    <% }) %>
-                </tbody>
-            </tbody>
-        </table>
-        <form id="auction-form" method="post" action="/hirer">
-            <input id="auction-trip-id" type="hidden" name="trip_id" value="">
-        </form>
-    </div>
+    <% } %>
+    <br />
+    <br />
+    <h4 style="color: #555">Your Auctions</h4>
+    <% if (auctions.length == 0) { %>
+        <p>-No auctions yet-</p>
+    <% } else { %>
+    <table id="hirer-auctions" class="details-table">
+        <tbody>
+            <tr>
+                <th>Address</th>
+                <th>Zip</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Pickup Time</th>
+                <th>Lowest Bid</th>
+                <th>Action</th>
+            </tr>
+            <% auctions.forEach( trip => { %>
+            <tr id="<%= trip.trip_id %>">
+                <td><%= trip.destAddress %></td>
+                <td><%= trip.destZip %></td>
+                <td><%= trip.destCity %></td>
+                <td><%= trip.destState %></td>
+                <td><%= trip.pickuptime.toString().slice(0,21) %></td>
+                <td><%= trip.highestbid %></td>
+                <td><button class="btn btn-outline-dark" onclick="endAuction(event)">End</button></td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+    <% } %>
+    <br />
+    <form id="auction-form" method="post" action="/hirer">
+        <input id="auction-trip-id" type="hidden" name="trip_id" value="">
+    </form>
 </div>
 </div>
 <script>
-    function endAuction(event){
+    function endAuction(event) {
         let selected = event.target.parentNode.parentNode;
         const trip_id = selected.id;
         document.getElementById('auction-trip-id').value = trip_id;

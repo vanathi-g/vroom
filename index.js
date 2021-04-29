@@ -53,7 +53,8 @@ connection.connect()
 app.get('/', function (req, res) {
     res.render('home', {
         title: "Home",
-        logged_in: session.user ? true : false
+        logged_in: session.user ? true : false,
+        type: (req.session.user) ? req.session.user.type : "none"
     });
 });
 
@@ -66,6 +67,7 @@ app.get('/login', function (req, res) {
         res.render('login', {
             title: "Home",
             logged_in: false,
+            type: (req.session.user) ? req.session.user.type : "none",
             message: ''
         });
     }
@@ -99,6 +101,7 @@ app.post('/login', function (req, res) {
                 title: "Home",
                 logged_in: false,
                 message: "Login failed... Please try again!",
+                type: (req.session.user) ? req.session.user.type : "none"
             });
         }
     });
@@ -111,6 +114,7 @@ app.get('/register-hirer', function (req, res) {
         res.render('reghirer', {
             title: "Register",
             logged_in: false,
+            type: (req.session.user) ? req.session.user.type : "none"
         });
     }
 });
@@ -122,6 +126,7 @@ app.get('/register-driver', function (req, res) {
         res.render('regdriver', {
             title: "Register",
             logged_in: false,
+            type: (req.session.user) ? req.session.user.type : "none"
         });
     }
 });
@@ -212,7 +217,8 @@ app.get('/driver', function (req, res) {
                     title: "Home",
                     logged_in: true,
                     requests: groupLoads(requests),
-                    upcoming: groupLoads(upcoming)
+                    upcoming: groupLoads(upcoming),
+                    type: (req.session.user) ? req.session.user.type : "none"
                 });
             });
         });
@@ -246,7 +252,8 @@ app.get('/hirer', function (req, res) {
                         logged_in: true,
                         nearby: nearby,
                         booked: booked,
-                        auctions: auctions
+                        auctions: auctions,
+                        type: (req.session.user) ? req.session.user.type : "none"
                     });
 
                 });
@@ -278,6 +285,7 @@ app.get('/book', function (req, res) {
         res.render('book', {
             title: "Book Now!",
             logged_in: true,
+            type: (req.session.user) ? req.session.user.type : "none"
         });
     } else {
         res.redirect('/login');
@@ -372,7 +380,8 @@ app.get('/auction', function (req, res) {
             res.render('auction', {
                 title: "Auction",
                 logged_in: true,
-                auctions: auctions
+                auctions: auctions,
+                type: (req.session.user) ? req.session.user.type : "none"
             });
         });
     } else {
@@ -399,14 +408,16 @@ app.post('/auction', function (req, res) {
 app.get('/about', function (req, res) {
     res.render('about', {
         title: "About",
-        logged_in: session.user ? true : false
+        logged_in: session.user ? true : false,
+        type: (req.session.user) ? req.session.user.type : "none"
     });
 });
 
 app.get('/contact', function (req, res) {
     res.render('contact', {
         title: "Contact Us",
-        logged_in: session.user ? true : false
+        logged_in: session.user ? true : false,
+        type: (req.session.user) ? req.session.user.type : "none"
     });
 });
 

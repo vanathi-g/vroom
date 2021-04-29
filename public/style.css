@@ -12,20 +12,20 @@
 }
 
 .cover-container {
-    max-width: 48em;
+    max-width: 55em;
 }
 
 .nav-masthead .nav-link {
     padding: 0.25rem 0;
     font-weight: 700;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.75);
     background-color: transparent;
     border-bottom: 0.25rem solid transparent;
 }
 
 .nav-masthead .nav-link:hover,
 .nav-masthead .nav-link:focus {
-    border-bottom-color: rgba(255, 255, 255, 0.25);
+    border-bottom-color: rgba(255, 255, 255, 0.5);
 }
 
 .nav-masthead .nav-link+.nav-link {
@@ -85,24 +85,36 @@
 }
 
 /* Driver and hirer homepages */
-.details-table {
+.details-table, .inner-table {
     border-collapse: collapse;
     width: 100%;
-  }
-  
-  .details-table td, .details-table th{
-    border: 1px solid #ddd;
+}
+
+.details-table td, .details-table th{
+    border: 2px solid #ddd;
     padding: 8px;
-  }
-  
-  .details-table tr:nth-child(even){background-color: #f2f2f2;}
-  
-  .details-table tr:hover {background-color: #ddd;}
-  
-  .details-table th {
+}
+
+.details-table tr:nth-child(even){background-color: #f2f2f2;}
+
+.details-table tr:hover {background-color: #ddd;}
+
+.details-table th {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;
-    background-color: #4CAF50;
+    background-color: #EC3F38;
     color: white;
-  }
+}
+
+.inner-table , .inner-table th, .inner-table tr, .inner-table td{
+    border: none;
+}
+
+.inner-table tr {
+    border-bottom: 1px solid #ddd;
+}
+
+.inner-table tr:last-child {
+    border-bottom: none;
+}

@@ -1,73 +1,72 @@
 <%- include('header') %>
 
-<body>
-    <div class="card reg-card">
-        <h5 class="card-header">Driver Registration</h5>
-        <div class="card-body">
-            <form class="row g-3" method="post" action="/register">
-                <div class="col-12">
-                    <label for="hirerName" class="form-label">Full Name </label>
-                    <input type="text" class="form-control" name="fname" id="hirerName"  required=true/>
-                </div>
-                <div class="col-12">
-                    <label for="email" class="form-label">Email ID</label>
-                    <input type="email" class="form-control" name="email" id="email" />
-                </div>
-                <div class="col-md-6">
-                    <label for="password" class="form-label">Password </label>
-                    <input type="password" class="form-control" name="pwd" id="password" />
-                </div>
-                <div class="col-md-6">
-                    <label for="password-check" class="form-label">Retype password </label>
-                    <input type="password" class="form-control" name="pwdcheck" id="password-check" />
-                </div>
-                <div class="col-md-12">
-                    <label for="hirerAddr" class="form-label">Residential Address</label>
-                    <textarea class="form-control" name="address" id="hirerAddr"></textarea>
-                </div>
-                <div class="col-md-4">
-                    <label for="hirerCity" class="form-label">City</label>
-                    <input type="text" class="form-control" name="city" id="hirerCity" />
-                </div>
-                <div class="col-md-4">
-                    <label for="hirerState" class="form-label">State</label>
-                    <input type="text" class="form-control" name="state" id="hirerState" />
-                </div>
-                <div class="col-md-4">
-                    <label for="zip" class="form-label">Zip Code</label>
-                    <input type="text" class="form-control" name="zip" id="zip" />
-                </div>
-                <div class="col-md-6">
-                    <label for="mobile" class="form-label">Mobile Number</label>
-                    <input type="text" class="form-control" name="phno" id="mobile" />
-                </div>
-                <div class="col-md-6">
-                    <label for="truckName" class="form-label">Truck name</label>
-                    <input type="text" class="form-control" name="truckName" id="truckName" />
-                </div>
-                <div class="col-md-6">
-                    <label for="inputCapacity" class="form-label">Truck Capacity</label>
-                    <input type="text" class="form-control" name="capacity" id="inputCapacity" />
-                </div>
-                <div class="col-md-4">
-                    <label for="loadtype[]" class="form-label">Preferred type of Load</label><br />
-                    <input type="checkbox" id="farm" name="loadtype[]" value="farm" />
-                    <label for="farm"> Farm Produce</label><br />
-                    <input type="checkbox" id="construction" name="loadtype[]" value="construction" />
-                    <label for="construction"> Construction Materials</label><br />
-                    <input type="checkbox" id="cold" name="loadtype[]" value="cold" />
-                    <label for="cold"> Cold Storage</label><br />
-                    <input type="checkbox" id="other" name="loadtype[]" value="other"/>
-                    <label for="other"> Other</label>
-                </div>
-                <br>
-                <div class="col-12">
-                    <input type="hidden" name="type" value="driver">
-                    <input type="submit" class="btn btn-dark" value="Register">
-                </div>
-                <p>Already have an account? <a href="/login">Sign In to your account!</a></p>
-            </form>
-        </div>
+<div class="px-5 py-5 my-5 card reg-card" style="border-radius: 0.5em;">
+    <h5 class="card-header">Driver Registration</h5>
+    <div class="card-body">
+        <form class="row g-3" method="post" action="/register">
+            <div class="col-12">
+                <label for="hirerName" class="form-label">Full Name </label>
+                <input type="text" class="form-control" name="fname" id="hirerName" required=true />
+            </div>
+            <div class="col-12">
+                <label for="email" class="form-label">Email ID</label>
+                <input type="email" class="form-control" name="email" id="email" />
+            </div>
+            <div class="col-md-6">
+                <label for="password" class="form-label">Password </label>
+                <input type="password" class="form-control" name="pwd" id="password" />
+            </div>
+            <div class="col-md-6">
+                <label for="password-check" class="form-label">Retype password </label>
+                <input type="password" class="form-control" name="pwdcheck" id="password-check" />
+            </div>
+            <div class="col-md-12">
+                <label for="hirerAddr" class="form-label">Residential Address</label>
+                <textarea class="form-control" name="address" id="hirerAddr"></textarea>
+            </div>
+            <div class="col-md-4">
+                <label for="hirerCity" class="form-label">City</label>
+                <input type="text" class="form-control" name="city" id="hirerCity" />
+            </div>
+            <div class="col-md-4">
+                <label for="hirerState" class="form-label">State</label>
+                <input type="text" class="form-control" name="state" id="hirerState" />
+            </div>
+            <div class="col-md-4">
+                <label for="zip" class="form-label">Zip Code</label>
+                <input type="text" class="form-control" name="zip" id="zip" />
+            </div>
+            <div class="col-md-6">
+                <label for="mobile" class="form-label">Mobile Number</label>
+                <input type="text" class="form-control" name="phno" id="mobile" />
+            </div>
+            <div class="col-md-6">
+                <label for="truckName" class="form-label">Truck name</label>
+                <input type="text" class="form-control" name="truckName" id="truckName" />
+            </div>
+            <div class="col-md-6">
+                <label for="inputCapacity" class="form-label">Truck Capacity</label>
+                <input type="text" class="form-control" name="capacity" id="inputCapacity" />
+            </div>
+            <div class="col-md-4">
+                <label for="loadtype[]" class="form-label">Preferred type of Load</label><br />
+                <input type="checkbox" id="farm" name="loadtype[]" value="farm" />
+                <label for="farm"> Farm Produce</label><br />
+                <input type="checkbox" id="construction" name="loadtype[]" value="construction" />
+                <label for="construction"> Construction Materials</label><br />
+                <input type="checkbox" id="cold" name="loadtype[]" value="cold" />
+                <label for="cold"> Cold Storage</label><br />
+                <input type="checkbox" id="other" name="loadtype[]" value="other" />
+                <label for="other"> Other</label>
+            </div>
+            <br>
+            <div class="col-12">
+                <input type="hidden" name="type" value="driver">
+                <input type="submit" class="btn btn-dark" value="Register">
+            </div>
+            <p>Already have an account? <a href="/login">Sign In to your account!</a></p>
+        </form>
     </div>
-    </div>
-    <%- include('footer') %>
+</div>
+</div>
+<%- include('footer') %>
