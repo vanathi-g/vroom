@@ -160,7 +160,6 @@ INSERT INTO trips VALUES(NULL, 'unconfirmed', 2);
 INSERT INTO loads VALUES(NULL, 'Industry Warehouse', 'Chennai', 'Tamil Nadu', '600008', '2021-04-30 07:00:00', 100, 'farm', 1, 1);
 INSERT INTO loads VALUES(NULL, 'Milk plant', 'Chennai', 'Tamil Nadu', '600005', '2021-04-30 09:00:00', 500, 'farm', 4, 1);
 
-
 SELECT SUM(weight) FROM loads, trips WHERE(trips.trip_id = loads.trip_id AND trips.driver_id = 2);
 
 SELECT driver_id, SUM(weight) FROM loads, trips WHERE(trips.trip_id = loads.trip_id AND trips.status='unconfirmed') GROUP BY driver_id;

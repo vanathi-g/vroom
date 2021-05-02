@@ -313,7 +313,7 @@ app.post('/book', function (req, res) {
                 const query1 = `INSERT INTO loads VALUES(NULL, ?, ${hirerid}, ${trip_id})`;
                 connection.query(query1, [Object.values(load)], function (err, results) {
                     if (err) throw err;
-                    const query2 = `INSERT INTO bids VALUES(${trip_id}, -1, 0)`;
+                    const query2 = `INSERT INTO bids VALUES(${trip_id}, -1, 9999)`;
                     connection.query(query2, function (err, results) {
                         if (err) throw err;
                     });
